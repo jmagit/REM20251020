@@ -2,6 +2,7 @@ package com.example.ioc.implementaciones;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -13,8 +14,9 @@ import com.example.ioc.contratos.Servicio;
 import com.example.ioc.contratos.ServicioCadenas;
 
 @Service
+@Lazy
 //@Primary
-@Profile({"prod", "default"})
+//@Profile({"prod", "default"})
 public class ServicioCadenasImpl implements ServicioCadenas {
 	private final RepositorioCadenas dao;
 	private final NotificationService notify;
@@ -22,7 +24,7 @@ public class ServicioCadenasImpl implements ServicioCadenas {
 	public ServicioCadenasImpl(RepositorioCadenas dao, NotificationService notify) {
 		this.dao = dao;
 		this.notify = notify;
-		notify.add(getClass().getSimpleName() + " Constructor");
+		this.notify.add(getClass().getSimpleName() + " Constructor");
 	}
 
 	@Override
