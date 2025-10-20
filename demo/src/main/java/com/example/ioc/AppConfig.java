@@ -7,6 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
+import com.example.ioc.anotaciones.Remoto;
 import com.example.ioc.contratos.Configuracion;
 import com.example.ioc.notificaciones.EMailSender;
 import com.example.ioc.notificaciones.FileSender;
@@ -38,7 +39,8 @@ public class AppConfig {
 	}
 	
 	@Bean
-	@Qualifier("remoto")
+//	@Qualifier("remoto")
+	@Remoto
 	Sender twittea(TwitterSender item) {
 		return item;
 	}

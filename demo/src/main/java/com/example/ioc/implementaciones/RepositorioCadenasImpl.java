@@ -13,7 +13,7 @@ import com.example.ioc.contratos.RepositorioCadenas;
 
 @Repository
 @Lazy
-//@Profile({"prod", "default"})
+@Profile({"prod", "default"})
 public class RepositorioCadenasImpl implements RepositorioCadenas {
 	private final Configuracion configuracion;
 	private final NotificationService notify;
