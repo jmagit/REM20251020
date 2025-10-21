@@ -3,6 +3,7 @@ package com.example;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import com.example.aop.AuthenticationService;
+import com.example.aop.StrictNullChecksAspect;
 import com.example.aop.introductions.Visible;
 import com.example.ioc.AppConfig;
 import com.example.ioc.ClaseNoComponente;
@@ -165,7 +167,7 @@ public class DemoApplication implements CommandLineRunner {
 		System.err.println("Lanzado por: %s con: %s".formatted(ev.origen(), ev.carga()));
 	}
 
-	@Bean
+//	@Bean
 	CommandLineRunner demosAOP(Dummy dummy, Configuracion config, ServicioCadenas srv, AuthenticationService auth) {
 		return arg -> {
 			try {
@@ -193,8 +195,66 @@ public class DemoApplication implements CommandLineRunner {
 				} else 
 					System.err.println("No implementa Visible");
 			} catch (Exception e) {
-				System.err.println("No se habia tratado en el aspecto: %s->%s".formatted(e.getClass().getSimpleName(), e.getCause()));
+				System.err.println("No se habia tratado en el aspecto: %s->%s".formatted(e.getClass().getSimpleName(), e.getMessage()));
 			}
+		};
+	}
+	
+	@Bean
+	CommandLineRunner strictNullChecks(Dummy dummy) {
+		return arg -> {
+			System.out.println("---------------> dummy inyectado");
+			System.out.println("Con proxy: " + dummy.getClass().getSimpleName());
+			try {
+				dummy.setDescontrolado(null);
+			} catch (Exception e) {
+				System.err.println(">>>> %s -> %s".formatted(e.getClass().getSimpleName(), e.getMessage()));
+			}
+			try {
+				System.out.println(dummy.getDescontrolado());
+			} catch (Exception e) {
+				System.err.println(">>>> %s -> %s".formatted(e.getClass().getSimpleName(), e.getMessage()));
+			}
+			try {
+				dummy.setDescontrolado("Con un valor");
+				System.out.println(dummy.getDescontrolado());
+			} catch (Exception e) {
+				System.err.println(">>>> %s -> %s".formatted(e.getClass().getSimpleName(), e.getMessage()));
+			}
+			try {
+				dummy.setControlado(null);
+			} catch (Exception e) {
+				System.err.println(">>>> %s -> %s".formatted(e.getClass().getSimpleName(), e.getMessage()));
+			}
+			System.out.println("---------------> dummy instanciado");
+			var d = new Dummy();
+			System.out.println("Sin proxy: " + d.getClass().getSimpleName());
+			try {
+				d.setDescontrolado("Pongo un valor");
+				System.out.println(d.getDescontrolado());
+				d.setDescontrolado(null);
+				System.out.println(d.getDescontrolado());
+				d.setControlado(null);
+			} catch (Exception e) {
+				System.err.println(">>>> %s -> %s".formatted(e.getClass().getSimpleName(), e.getMessage()));
+			}
+
+			System.out.println("---------------> dummy envuelto");
+			var factory = new AspectJProxyFactory(d);
+			factory.addAspect(StrictNullChecksAspect.class);
+			var proxy = (Dummy)factory.getProxy();
+			System.out.println("Sin proxy: " + d.getClass().getSimpleName());
+			System.out.println("Con proxy: " + proxy.getClass().getSimpleName());
+			try {
+				proxy.setDescontrolado("Pongo un valor en el proxy");
+				System.out.println(proxy.getDescontrolado());
+				proxy.setDescontrolado(null);
+				System.out.println(proxy.getDescontrolado());
+				proxy.setControlado(null);
+			} catch (Exception e) {
+				System.err.println(">>>> %s -> %s".formatted(e.getClass().getSimpleName(), e.getMessage()));
+			}
+
 		};
 	}
 
