@@ -15,8 +15,11 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.event.EventListener;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
+import com.example.aop.AuthenticationService;
+import com.example.aop.introductions.Visible;
 import com.example.ioc.AppConfig;
 import com.example.ioc.ClaseNoComponente;
+import com.example.ioc.Dummy;
 import com.example.ioc.GenericoEvent;
 import com.example.ioc.NotificationService;
 import com.example.ioc.Rango;
@@ -122,7 +125,7 @@ public class DemoApplication implements CommandLineRunner {
 		};
 	}
 
-	@Bean
+//	@Bean
 	CommandLineRunner valores(ConstructorConValores obj, @Value("${mi.valor:Sin valor}") String cad, Rango rango ) {
 		return arg -> {
 			notify.add(cad);
@@ -157,9 +160,42 @@ public class DemoApplication implements CommandLineRunner {
 		};
 	}
 
-	@EventListener
+//	@EventListener
 	void eventHandler(GenericoEvent ev) {
 		System.err.println("Lanzado por: %s con: %s".formatted(ev.origen(), ev.carga()));
+	}
+
+	@Bean
+	CommandLineRunner demosAOP(Dummy dummy, Configuracion config, ServicioCadenas srv, AuthenticationService auth) {
+		return arg -> {
+			try {
+				auth.login();
+//				System.out.println(dummy.getClass().getSimpleName());
+//				System.out.println(dummy instanceof Dummy);
+//				System.out.println(config.getNext());
+//				dummy.setControlado(null);
+				srv.get().forEach(notify::add);
+				System.out.println("------------------------------>");
+				notify.getListado().forEach(System.out::println);
+				notify.clear();
+				System.out.println("<------------------------------");
+				srv.add("añado");
+				srv.modify("Modificado");
+				System.out.println("------------------------------>");
+				notify.getListado().forEach(System.out::println);
+				System.out.println("<------------------------------");
+				if(srv instanceof Visible v) {
+					System.err.println(v.isVisible() ? "Es visible" : "No es visible");
+					v.mostrar();
+					System.err.println(v.isVisible() ? "Es visible" : "No es visible");
+					v.ocultar();
+					System.err.println(v.isVisible() ? "Es visible" : "No es visible");
+				} else 
+					System.err.println("No implementa Visible");
+			} catch (Exception e) {
+				System.err.println("No se habia tratado en el aspecto: %s->%s".formatted(e.getClass().getSimpleName(), e.getCause()));
+			}
+		};
 	}
 
 }

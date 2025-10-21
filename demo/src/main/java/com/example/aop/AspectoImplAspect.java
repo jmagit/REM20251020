@@ -12,7 +12,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-//@Component
+@Component
 @Aspect
 public class AspectoImplAspect {
 	@Pointcut("execution(public * com.example.ioc..*.*(..))")
@@ -41,10 +41,10 @@ public class AspectoImplAspect {
 //		System.err.println(">>> Soy un consejo despuesDelMetodo " + jp.getSignature());
 //	}
 
-//	@AfterReturning(pointcut="execution(int com.example.ioc..*.get*(..))",	returning="retVal")
-//	public void consejoDespuesDeGetPropiedad(JoinPoint jp, int retVal) {
-//		System.err.println(">>> La funcion '" + jp.getSignature() + "' ha devuelto " + retVal);
-//	}
+	@AfterReturning(pointcut="execution(int com.example.ioc..*.get*(..))",	returning="retVal")
+	public void consejoDespuesDeGetPropiedad(JoinPoint jp, int retVal) {
+		System.err.println(">>> La funcion '" + jp.getSignature() + "' ha devuelto " + retVal);
+	}
 
 //	@AfterThrowing(pointcut="execution(void com.example.ioc..*.set*(..))",	throwing = "ex")
 //	public void consejoDespuesDeGetPropiedad(JoinPoint jp, Throwable ex) {

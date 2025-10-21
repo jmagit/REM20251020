@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
+import com.example.aop.anotations.Logged;
+import com.example.aop.anotations.LoggerAll;
 import com.example.ioc.NotificationService;
 import com.example.ioc.contratos.Repositorio;
 import com.example.ioc.contratos.RepositorioCadenas;
@@ -38,6 +40,7 @@ public class ServicioCadenasImpl implements ServicioCadenas {
 	}
 
 	@Override
+	@LoggerAll
 	public void add(String item) {
 		if (item == null || item.trim() == "")
 			throw new IllegalArgumentException("Datos invalidos.");
@@ -45,7 +48,7 @@ public class ServicioCadenasImpl implements ServicioCadenas {
 	}
 
 	@Override
-//	@Logged
+	@Logged
 	public void modify(String item) {
 		if (item == null || item.trim() == "")
 			throw new IllegalArgumentException("Datos invalidos.");
