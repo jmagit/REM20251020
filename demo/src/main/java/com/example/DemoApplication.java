@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,10 +15,12 @@ import org.springframework.context.annotation.Bean;
 import com.example.ioc.AppConfig;
 import com.example.ioc.ClaseNoComponente;
 import com.example.ioc.NotificationService;
+import com.example.ioc.Rango;
 import com.example.ioc.anotaciones.Remoto;
 import com.example.ioc.contratos.Configuracion;
 import com.example.ioc.contratos.Servicio;
 import com.example.ioc.contratos.ServicioCadenas;
+import com.example.ioc.notificaciones.ConstructorConValores;
 import com.example.ioc.notificaciones.Sender;
 
 @SpringBootApplication
@@ -57,7 +60,7 @@ public class DemoApplication implements CommandLineRunner {
 		};
 	}
 
-	@Bean
+//	@Bean
 	CommandLineRunner cadenaDeDependencias(ServicioCadenas srv) {
 		return args -> {
 			srv.get().forEach(notify::add);
@@ -111,6 +114,15 @@ public class DemoApplication implements CommandLineRunner {
 			senders.forEach(s -> s.send(s.getClass().getCanonicalName()));
 			mapa.forEach((k, v) -> System.out.println("%s -> %s".formatted(k, v.getClass().getCanonicalName())));
 			servicios.forEach(s -> System.out.println(s.getClass().getCanonicalName()));
+		};
+	}
+
+	@Bean
+	CommandLineRunner valores(ConstructorConValores obj, @Value("${mi.valor:Sin valor}") String cad, Rango rango ) {
+		return arg -> {
+			notify.add(cad);
+			notify.add(rango.toString());
+			notify.getListado().forEach(System.out::println);
 		};
 	}
 

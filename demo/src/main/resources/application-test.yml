@@ -1,0 +1,32 @@
+# Conversion to YAML from Properties formar report
+# Warnings:
+# - The yaml file had comments which are lost in the refactoring!
+spring:
+  application:
+    name: demo
+  datasource:
+    url: jdbc:mysql://${DB_SERVER:localhost:3306/sakila}
+    username: ${DB_USR:root}
+    password: ${DB_PWD:root}
+server:
+  port: ${PORT:8080}
+info:
+  app:
+    name: ${spring.application.name}
+    description: Ejemplos del curso de Spring
+    version: 1.0.0
+    author: Javier
+  server:
+    port: ${server.port}
+logging:
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n'
+  level:
+    org:
+      hibernate:
+        SQL: debug
+mi:
+  valor: Leido del application.properties
+rango:
+  min: 1
+  max: 10
