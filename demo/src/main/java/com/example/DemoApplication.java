@@ -11,10 +11,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.event.EventListener;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import com.example.ioc.AppConfig;
 import com.example.ioc.ClaseNoComponente;
+import com.example.ioc.GenericoEvent;
 import com.example.ioc.NotificationService;
 import com.example.ioc.Rango;
 import com.example.ioc.anotaciones.Remoto;
@@ -118,16 +120,18 @@ public class DemoApplication implements CommandLineRunner {
 		};
 	}
 
-//	@Bean
+	@Bean
 	CommandLineRunner valores(ConstructorConValores obj, @Value("${mi.valor:Sin valor}") String cad, Rango rango ) {
 		return arg -> {
 			notify.add(cad);
 			notify.add(rango.toString());
 			notify.getListado().forEach(System.out::println);
+			notify.delete(0);
+			notify.clear();
 		};
 	}
 
-	@Bean
+//	@Bean
 	CommandLineRunner xml() {
 		return arg -> {
 //			System.out.println(System.getProperty("java.class.path"));
@@ -151,5 +155,9 @@ public class DemoApplication implements CommandLineRunner {
 		};
 	}
 
+	@EventListener
+	void eventHandler(GenericoEvent ev) {
+		System.err.println("Lanzado por: %s con: %s".formatted(ev.origen(), ev.carga()));
+	}
 
 }
