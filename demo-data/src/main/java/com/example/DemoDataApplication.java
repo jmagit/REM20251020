@@ -59,7 +59,7 @@ public class DemoDataApplication implements CommandLineRunner {
 						, newId);
 				System.out.println(">>> Consulta nuevo: %d => %s".formatted(newId, vet));
 				rows = db.update(
-						"update vets set id = ?, first_name = ?, last_name = ? where id=?", 
+						"update vets set first_name = ?, last_name = ? where id=?", 
 						vet.firstName().toUpperCase(), vet.lastName().toUpperCase(), vet.id());
 				System.out.println(">>> Modificados: " + rows);
 				System.out.println(">>> Listado actual");
@@ -118,7 +118,7 @@ public class DemoDataApplication implements CommandLineRunner {
 		};
 	}
 	
-	@Bean
+//	@Bean
 	CommandLineRunner demoJdbcClient(JdbcClient db) {
 		return args -> {
 			record Vet(int id, String firstName, String lastName) {}
@@ -150,6 +150,28 @@ public class DemoDataApplication implements CommandLineRunner {
 			} catch (DataAccessException e) {
 				System.err.println(e.getMessage());
 			}
+		};
+	}
+
+	@Bean
+	CommandLineRunner soloConsulta(JdbcClient db) {
+		return args -> {
+			record Vet(int id, String firstName, String lastName) {}
+			try {
+				db.sql("select * from vets")
+					.query(Vet.class)
+					.list()
+					.forEach(System.out::println);
+			} catch (DataAccessException e) {
+				System.err.println(e.getMessage());
+			}
+		};
+	}
+
+	@Bean
+	CommandLineRunner ejemplosData(EjemplosSpringData demos) {
+		return args -> {
+			demos.run();
 		};
 	}
 
