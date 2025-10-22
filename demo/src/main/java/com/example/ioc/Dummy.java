@@ -45,6 +45,10 @@ public class Dummy {
 	}
 
 	@Async
+	public void ejecutarTareaSimpleAsync(int i) {
+		ejecutarTareaSimple(i);
+	}
+	
 	public void ejecutarTareaSimple(int i) {
 		System.err.println(
 				"-> Tarea simple %d ejecutándose en el hilo: %s.".formatted(i, Thread.currentThread().getName()));
@@ -57,6 +61,10 @@ public class Dummy {
 	}
 
 	@Async
+	public CompletableFuture<String> calcularResultadoAsync(int... input) {
+		return calcularResultado(input);
+	}
+	
 	public CompletableFuture<String> calcularResultado(int... input) {
 		System.err.println(
 				"-> Cálculo para %s iniciando en el hilo: %s.".formatted(Arrays.toString(input), Thread.currentThread().getName()));

@@ -2,6 +2,7 @@ package com.example;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.event.EventListener;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import com.example.aop.AuthenticationService;
 import com.example.aop.StrictNullChecksAspect;
@@ -33,6 +37,8 @@ import com.example.ioc.notificaciones.ConstructorConValores;
 import com.example.ioc.notificaciones.Sender;
 
 @EnableAspectJAutoProxy
+@EnableAsync
+@EnableScheduling
 @SpringBootApplication
 public class DemoApplication implements CommandLineRunner {
 
@@ -200,7 +206,7 @@ public class DemoApplication implements CommandLineRunner {
 		};
 	}
 	
-	@Bean
+//	@Bean
 	CommandLineRunner strictNullChecks(Dummy dummy) {
 		return arg -> {
 			System.out.println("---------------> dummy inyectado");
@@ -258,4 +264,28 @@ public class DemoApplication implements CommandLineRunner {
 		};
 	}
 
+//	@Bean
+	CommandLineRunner asincrono(Dummy dummy) {
+		return arg -> {
+			var obj = new Dummy();//dummy; // 
+			notify.add("Empiezo asincrono");
+			System.err.println(obj.getClass().getCanonicalName());
+			obj.ejecutarTareaSimpleAsync(1);
+			obj.ejecutarTareaSimpleAsync(2);
+			obj.calcularResultadoAsync(10, 20, 30, 40, 50).thenAccept(result -> notify.add(result));
+			obj.calcularResultadoAsync(1, 2, 3).thenAccept(result -> notify.add(result));
+			obj.calcularResultadoAsync().thenAccept(result -> notify.add(result));
+			notify.add("Termino asincrono");
+		};
+	}
+
+//	@Scheduled(fixedDelay = 5, timeUnit = TimeUnit.SECONDS )
+	void periodico() {
+//		System.out.println("Han pasado 5 segundos");
+		if(!notify.hasMessages()) return;
+		System.out.println(">>> Scheduled =====================================");
+		notify.getListado().forEach(System.out::println);
+		notify.clear();
+		System.out.println("<<< Scheduled =====================================");
+	}
 }

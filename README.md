@@ -79,6 +79,7 @@
 
 - [Building an Application with Spring Boot](https://spring.io/guides/gs/spring-boot)
 - [Scheduling Tasks](https://spring.io/guides/gs/scheduling-tasks)
+- [Accessing Relational Data using JDBC with Spring](https://spring.io/guides/gs/relational-data-access)
 - [Accessing Data with JPA](https://spring.io/guides/gs/accessing-data-jpa)
 - [Validating Form Input](https://spring.io/guides/gs/validating-form-input)
 - [Managing Transactions](https://spring.io/guides/gs/managing-transactions)
