@@ -3,6 +3,7 @@ package com.example.domain.entities;
 import java.io.Serializable;
 import jakarta.persistence.*;
 import java.util.Date;
+import java.util.Objects;
 
 
 /**
@@ -35,6 +36,20 @@ public class Visit implements Serializable {
 	public Visit() {
 	}
 
+
+	public Visit(int id, Date visitDate) {
+		super();
+		this.id = id;
+		this.visitDate = visitDate;
+	}
+
+	public Visit(int id, Date visitDate, String description) {
+		super();
+		this.id = id;
+		this.visitDate = visitDate;
+		this.description = description;
+	}
+
 	public int getId() {
 		return this.id;
 	}
@@ -65,6 +80,28 @@ public class Visit implements Serializable {
 
 	public void setPet(Pet pet) {
 		this.pet = pet;
+	}
+
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof Visit))
+			return false;
+		Visit other = (Visit) obj;
+		return id == other.id;
+	}
+
+
+	@Override
+	public String toString() {
+		return "Visit [id=" + id + ", visitDate=" + visitDate + ", description=" + description + "]";
 	}
 
 }

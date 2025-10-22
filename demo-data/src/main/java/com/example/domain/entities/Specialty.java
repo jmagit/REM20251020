@@ -24,16 +24,7 @@ public class Specialty implements Serializable {
 	private String name;
 
 	//bi-directional many-to-many association to Vet
-	@ManyToMany
-	@JoinTable(
-		name="vet_specialties"
-		, joinColumns={
-			@JoinColumn(name="specialty_id", nullable=false)
-			}
-		, inverseJoinColumns={
-			@JoinColumn(name="vet_id", nullable=false)
-			}
-		)
+	@ManyToMany(mappedBy="specialties")
 	private Set<Vet> vets;
 
 	public Specialty() {

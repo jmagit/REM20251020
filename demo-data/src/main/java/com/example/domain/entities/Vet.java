@@ -2,6 +2,9 @@ package com.example.domain.entities;
 
 import java.io.Serializable;
 import jakarta.persistence.*;
+
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -27,10 +30,38 @@ public class Vet implements Serializable {
 	private String lastName;
 
 	//bi-directional many-to-many association to Specialty
-	@ManyToMany(mappedBy="vets")
+	@ManyToMany
+	@JoinTable(
+			name="vet_specialties"
+			, joinColumns={
+				@JoinColumn(name="vet_id", nullable=false)
+				}
+			, inverseJoinColumns={
+				@JoinColumn(name="specialty_id", nullable=false)
+				}
+			)
 	private Set<Specialty> specialties;
 
 	public Vet() {
+		specialties = new HashSet<>();
+	}
+
+	public Vet(int id) {
+		this();
+		this.id = id;
+	}
+
+	public Vet(String firstName, String lastName) {
+		this();
+		this.firstName = firstName;
+		this.lastName = lastName;
+	}
+
+	public Vet(int id, String firstName, String lastName) {
+		this();
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
 	}
 
 	public int getId() {
@@ -63,6 +94,30 @@ public class Vet implements Serializable {
 
 	public void setSpecialties(Set<Specialty> specialties) {
 		this.specialties = specialties;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof Vet))
+			return false;
+		Vet other = (Vet) obj;
+		return id == other.id;
+	}
+
+	@Override
+	public String toString() {
+		return "Vet [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + "]";
+	}
+	
+	public void jubilate() {
+		
 	}
 
 }

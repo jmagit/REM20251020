@@ -3,6 +3,8 @@ package com.example.domain.entities;
 import java.io.Serializable;
 import jakarta.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -39,10 +41,33 @@ public class Pet implements Serializable {
 	private Type type;
 
 	//bi-directional many-to-one association to Visit
-	@OneToMany(mappedBy="pet")
+	@OneToMany(mappedBy="pet", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	private Set<Visit> visits;
 
 	public Pet() {
+		visits = new HashSet<>();
+	}
+
+	public Pet(int id) {
+		this();
+		this.id = id;
+	}
+
+	public Pet(int id, String name, Date birthDate, Type type) {
+		this();
+		this.id = id;
+		this.birthDate = birthDate;
+		this.name = name;
+		this.type = type;
+	}
+
+	public Pet(int id, String name, Date birthDate, Type type, Owner owner) {
+		this();
+		this.id = id;
+		this.birthDate = birthDate;
+		this.name = name;
+		this.owner = owner;
+		this.type = type;
 	}
 
 	public int getId() {
@@ -107,4 +132,25 @@ public class Pet implements Serializable {
 		return visit;
 	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof Pet))
+			return false;
+		Pet other = (Pet) obj;
+		return id == other.id;
+	}
+
+	@Override
+	public String toString() {
+		return "Pet [id=" + id + ", name=" + name + ", birthDate=" + birthDate + "]";
+	}
+
+	
 }
