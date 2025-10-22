@@ -30,6 +30,17 @@ public class Type implements Serializable {
 	public Type() {
 	}
 
+	public Type(int id) {
+		super();
+		this.id = id;
+	}
+
+	public Type(int id, String name) {
+		super();
+		this.id = id;
+		this.name = name;
+	}
+
 	public int getId() {
 		return this.id;
 	}

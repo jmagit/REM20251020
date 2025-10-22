@@ -153,7 +153,7 @@ public class DemoDataApplication implements CommandLineRunner {
 		};
 	}
 
-	@Bean
+//	@Bean
 	CommandLineRunner soloConsulta(JdbcClient db) {
 		return args -> {
 			record Vet(int id, String firstName, String lastName) {}
