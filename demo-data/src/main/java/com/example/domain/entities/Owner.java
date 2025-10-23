@@ -4,6 +4,7 @@ import java.io.Serializable;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.example.core.domain.entities.AbstractEntity;
+import com.example.core.domain.validation.NIF;
 
 /**
  * The persistent class for the owners database table.
@@ -33,6 +35,7 @@ public class Owner extends AbstractEntity<Owner> implements Serializable {
 	@Column(name = "first_name", nullable = false, length = 30)
 	@NotBlank
 	@Size(min = 2, max = 30)
+	@Pattern(regexp = "^[A-Z]*$", message = "Tiene que estar en mayusculas")
 	private String firstName;
 
 	@Column(name = "last_name", nullable = false, length = 30)
@@ -46,6 +49,7 @@ public class Owner extends AbstractEntity<Owner> implements Serializable {
 
 	@Column(length = 20)
 	@Size(max = 20)
+	@NIF
 	private String telephone;
 
 	// bi-directional many-to-one association to Pet

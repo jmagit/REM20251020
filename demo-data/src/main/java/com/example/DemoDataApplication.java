@@ -171,14 +171,16 @@ public class DemoDataApplication implements CommandLineRunner {
 	@Bean
 	CommandLineRunner ejemplosData(EjemplosSpringData demos) {
 		return args -> {
-			try {
-				demos.transaccion();
-				
-			} catch (Exception e) {
-				System.err.println(e.getMessage());
-			}
-			demos.veterinarios();			
-			demos.propietarios();
+//			try {
+////				demos.transaccion();
+//			demos.run();
+//				
+//			} catch (Exception e) {
+//				System.err.println(e.getMessage());
+//			}
+//			demos.veterinarios();			
+//			demos.propietarios();
+			demos.validaciones();
 //			demos.run();
 		};
 	}

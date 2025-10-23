@@ -1,5 +1,7 @@
 package com.example.domain.entities;
 
+import com.example.core.domain.validation.NotOnlyBlank;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.Size;
@@ -8,10 +10,12 @@ import jakarta.validation.constraints.Size;
 public class Direction {
 	@Column(length=255)
 	@Size(max = 255)
+	@NotOnlyBlank
 	private String address;
 
 	@Column(length=80)
 	@Size(max = 80)
+	@NotOnlyBlank
 	private String city;
 
 	public Direction() {
