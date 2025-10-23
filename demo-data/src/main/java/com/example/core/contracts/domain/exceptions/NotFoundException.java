@@ -2,7 +2,7 @@ package com.example.core.contracts.domain.exceptions;
 
 import java.io.Serial;
 
-public class NotFoundException extends Exception {
+public class NotFoundException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = 1L;
 	private final static String MESSAGE_STRING = "Not found";

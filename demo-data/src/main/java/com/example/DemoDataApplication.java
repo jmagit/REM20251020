@@ -15,6 +15,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.JdbcClient;
 
+import com.example.contracts.domain.services.PetsService;
+
 @SpringBootApplication
 public class DemoDataApplication implements CommandLineRunner {
 
@@ -169,7 +171,7 @@ public class DemoDataApplication implements CommandLineRunner {
 	}
 
 	@Bean
-	CommandLineRunner ejemplosData(EjemplosSpringData demos) {
+	CommandLineRunner ejemplosData(EjemplosSpringData demos, PetsService srv) {
 		return args -> {
 //			try {
 ////				demos.transaccion();
@@ -183,6 +185,7 @@ public class DemoDataApplication implements CommandLineRunner {
 //			demos.propietarios();
 //			demos.validaciones();
 //			demos.run();
+			srv.getAll().forEach(System.out::println);
 		};
 	}
 
