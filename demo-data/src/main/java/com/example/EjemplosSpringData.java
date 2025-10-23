@@ -17,6 +17,12 @@ import com.example.domain.entities.Specialty;
 import com.example.domain.entities.Type;
 import com.example.domain.entities.Vet;
 import com.example.domain.entities.Visit;
+import com.example.domain.entities.models.OwnerDTO;
+import com.example.domain.entities.models.OwnerPlain;
+import com.example.domain.entities.models.PetDetails;
+import com.example.domain.entities.models.PetEdit;
+import com.example.domain.entities.models.PetShort;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -56,12 +62,12 @@ public class EjemplosSpringData {
 	PetsRepository daoPets;
 
 	void mascotas() {
-		daoPets.findAll().forEach(System.out::println);
-		var m = new Pet(0, "Tobby", LocalDate.of(2022, 10, 12), new Type(2));
-		m.addVisit(new Visit(0, LocalDate.of(2022, 10, 12), "limpieza"));
-		m = daoPets.save(m);
-		System.out.println(m);
-		m.getVisits().forEach(System.out::println);
+//		daoPets.findAll().forEach(System.out::println);
+//		var m = new Pet(0, "Tobby", LocalDate.of(2022, 10, 12), new Type(2));
+//		m.addVisit(new Visit(0, LocalDate.of(2022, 10, 12), "limpieza"));
+//		m = daoPets.save(m);
+//		System.out.println(m);
+//		m.getVisits().forEach(System.out::println);
 //		m = daoPets.findById(7).get();
 //		System.out.println(m);
 //		m.getVisits().forEach(System.out::println);
@@ -69,7 +75,24 @@ public class EjemplosSpringData {
 //		m = daoPets.save(m);
 //		daoPets.deleteById(13);
 //		daoPets.findAll().forEach(System.out::println);
-
+//		daoPets.findAllBy(PetShort.class).forEach(item -> {
+//			try {
+//				System.out.println(mapper.writeValueAsString(item));
+//			} catch (JsonProcessingException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		});
+//		daoPets.findAllBy(PetDetails.class).forEach(System.out::println);
+//		daoPets.findAllBy(PetEdit.class).forEach(System.out::println);
+		daoPets.findAllBy(PetDetails.class).forEach(item -> {
+		try {
+			System.out.println(mapper.writeValueAsString(item));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	});
 	}
 
 	@Autowired
@@ -86,7 +109,7 @@ public class EjemplosSpringData {
 //		System.out.println(">>> findNuevosConJPQL");
 //		daoOwners.findNuevosConJPQL(10).forEach(System.out::println);
 //		System.out.println(">>> findNuevosConSQL");
-		daoOwners.findNuevosConSQL(10).forEach(System.out::println);
+//		daoOwners.findNuevosConSQL(10).forEach(System.out::println);
 //		System.out.println(">>> Specification");
 //		daoOwners.findAll((root, query, builder) -> builder.greaterThanOrEqualTo(root.get("id"), 10)).forEach(System.out::println);
 //		System.out.println(">>> Otra Specification");
@@ -95,6 +118,34 @@ public class EjemplosSpringData {
 //			System.out.println(item);
 //			item.getPets().forEach(m -> System.out.println("\t" + m));
 //		});
+//		daoOwners.findByIdGreaterThanEqual(10).forEach(item -> System.out.println(OwnerDTO.from(item)));
+//		daoOwners.queryByIdGreaterThanEqual(10).forEach(System.out::println);
+//		daoOwners.searchByIdGreaterThanEqual(10).forEach(item -> {
+//			try {
+//				System.out.println(mapper.writeValueAsString(item));
+//			} catch (JsonProcessingException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		});
+//		daoOwners.findMapa(10).forEach(item -> {
+//			try {
+//				System.out.println(mapper.writeValueAsString(item));
+//			} catch (JsonProcessingException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		});
+		daoOwners.readByIdGreaterThanEqual(10, OwnerDTO.class).forEach(System.out::println);
+		daoOwners.readByIdGreaterThanEqual(10, OwnerPlain.class).forEach(item -> {
+			try {
+				System.out.println(mapper.writeValueAsString(item));
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
+
 	}
 
 	@Transactional

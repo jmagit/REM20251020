@@ -179,8 +179,9 @@ public class DemoDataApplication implements CommandLineRunner {
 //				System.err.println(e.getMessage());
 //			}
 //			demos.veterinarios();			
+			demos.mascotas();
 //			demos.propietarios();
-			demos.validaciones();
+//			demos.validaciones();
 //			demos.run();
 		};
 	}
