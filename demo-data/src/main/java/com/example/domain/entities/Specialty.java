@@ -2,7 +2,14 @@ package com.example.domain.entities;
 
 import java.io.Serializable;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+
+import com.example.core.domain.entities.AbstractEntity;
 
 
 /**
@@ -12,7 +19,7 @@ import java.util.Set;
 @Entity
 @Table(name="specialties")
 @NamedQuery(name="Specialty.findAll", query="SELECT s FROM Specialty s")
-public class Specialty implements Serializable {
+public class Specialty extends AbstractEntity<Specialty> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -21,6 +28,8 @@ public class Specialty implements Serializable {
 	private int id;
 
 	@Column(nullable=false, length=80)
+	@NotBlank
+	@Size(min = 2, max = 80)
 	private String name;
 
 	//bi-directional many-to-many association to Vet
@@ -28,6 +37,21 @@ public class Specialty implements Serializable {
 	private Set<Vet> vets;
 
 	public Specialty() {
+		vets = new HashSet<>();
+	}
+
+	public Specialty(int id) {
+		this();
+		this.id = id;
+	}
+
+	public Specialty(int id, String name) {
+		this(id);
+		this.name = name;
+	}
+
+	public Specialty(String name) {
+		this(0, name);
 	}
 
 	public int getId() {
@@ -54,4 +78,24 @@ public class Specialty implements Serializable {
 		this.vets = vets;
 	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof Specialty))
+			return false;
+		return id == ((Specialty) obj).id;
+	}
+
+	@Override
+	public String toString() {
+		return "Specialty [id=" + id + ", name=" + name + "]";
+	}
+
+	
 }

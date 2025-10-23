@@ -1,7 +1,12 @@
 package com.example.domain.entities;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import java.util.Date;
 import java.util.Objects;
 
@@ -21,12 +26,14 @@ public class Visit implements Serializable {
 	@Column(unique=true, nullable=false)
 	private int id;
 
-	@Column(length=255)
-	private String description;
-
 	@Temporal(TemporalType.DATE)
 	@Column(name="visit_date", nullable=false)
-	private Date visitDate;
+	@NotNull
+	private LocalDate visitDate;
+
+	@Column(length=255)
+	@Size(max = 255)
+	private String description;
 
 	//bi-directional many-to-one association to Pet
 	@ManyToOne
@@ -37,13 +44,13 @@ public class Visit implements Serializable {
 	}
 
 
-	public Visit(int id, Date visitDate) {
+	public Visit(int id, LocalDate visitDate) {
 		super();
 		this.id = id;
 		this.visitDate = visitDate;
 	}
 
-	public Visit(int id, Date visitDate, String description) {
+	public Visit(int id, LocalDate visitDate, String description) {
 		super();
 		this.id = id;
 		this.visitDate = visitDate;
@@ -66,11 +73,11 @@ public class Visit implements Serializable {
 		this.description = description;
 	}
 
-	public Date getVisitDate() {
+	public LocalDate getVisitDate() {
 		return this.visitDate;
 	}
 
-	public void setVisitDate(Date visitDate) {
+	public void setVisitDate(LocalDate visitDate) {
 		this.visitDate = visitDate;
 	}
 
@@ -79,7 +86,16 @@ public class Visit implements Serializable {
 	}
 
 	public void setPet(Pet pet) {
+		if(pet == null)
+			throw new IllegalArgumentException("Argumento null");
 		this.pet = pet;
+		if(!pet.getVisits().contains(this))
+			pet.addVisit(this);
+	}
+	public void clearPet() {
+		this.pet = null;
+		if(pet.getVisits().contains(this))
+			pet.removeVisit(this);
 	}
 
 
@@ -101,7 +117,9 @@ public class Visit implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Visit [id=" + id + ", visitDate=" + visitDate + ", description=" + description + "]";
+		return "Visit [id=" + id + ", pet=" + pet.getName() + ", visitDate=" + visitDate + ", description=" + description + "]";
 	}
+
+
 
 }

@@ -1,5 +1,6 @@
 package com.example;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +11,17 @@ import com.example.contracts.domain.repositories.VetsRepository;
 import com.example.domain.entities.Pet;
 import com.example.domain.entities.Type;
 import com.example.domain.entities.Visit;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class EjemplosSpringData {
+	ObjectMapper mapper;
 	
+	public EjemplosSpringData(ObjectMapper mapper) {
+		super();
+		this.mapper = mapper;
+	}
+
 	public void run() {
 //		veterinarios();
 		mascotas();
@@ -30,8 +38,8 @@ public class EjemplosSpringData {
 	
 	void mascotas() {
 		daoPets.findAll().forEach(System.out::println);
-		var m = new Pet(0, "Tobby", new Date("10/12/2022"), new Type(2));
-		m.addVisit(new Visit(0,  new Date("10/12/2024"), "limpieza"));
+		var m = new Pet(0, "Tobby", LocalDate.of(2022, 10, 12), new Type(2));
+		m.addVisit(new Visit(0, LocalDate.of(2022, 10, 12), "limpieza"));
 		m = daoPets.save(m);
 		System.out.println(m);
 		m.getVisits().forEach(System.out::println);

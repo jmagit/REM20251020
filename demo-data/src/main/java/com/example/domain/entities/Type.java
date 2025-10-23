@@ -2,7 +2,13 @@ package com.example.domain.entities;
 
 import java.io.Serializable;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+import java.util.Objects;
 import java.util.Set;
+
+import com.example.core.domain.entities.AbstractEntity;
 
 
 /**
@@ -12,7 +18,7 @@ import java.util.Set;
 @Entity
 @Table(name="types")
 @NamedQuery(name="Type.findAll", query="SELECT t FROM Type t")
-public class Type implements Serializable {
+public class Type  extends AbstractEntity<Type> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -21,6 +27,8 @@ public class Type implements Serializable {
 	private int id;
 
 	@Column(nullable=false, length=80)
+	@NotBlank
+	@Size(min = 2, max = 80)
 	private String name;
 
 	//bi-directional many-to-one association to Pet
@@ -77,6 +85,25 @@ public class Type implements Serializable {
 		pet.setType(null);
 
 		return pet;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof Type))
+			return false;
+		return id == ((Type) obj).id;
+	}
+
+	@Override
+	public String toString() {
+		return "Type [id=" + id + ", name=" + name + "]";
 	}
 
 }

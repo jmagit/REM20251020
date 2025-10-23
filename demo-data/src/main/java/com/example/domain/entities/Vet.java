@@ -2,10 +2,14 @@ package com.example.domain.entities;
 
 import java.io.Serializable;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+
+import com.example.core.domain.entities.AbstractEntity;
 
 
 /**
@@ -15,7 +19,7 @@ import java.util.Set;
 @Entity
 @Table(name="vets")
 @NamedQuery(name="Vet.findAll", query="SELECT v FROM Vet v")
-public class Vet implements Serializable {
+public class Vet extends AbstractEntity<Vet> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -24,21 +28,20 @@ public class Vet implements Serializable {
 	private int id;
 
 	@Column(name="first_name", nullable=false, length=30)
+	@NotBlank
+	@Size(min = 2, max = 30)
 	private String firstName;
 
 	@Column(name="last_name", length=30)
+	@Size(min = 2, max = 30)
 	private String lastName;
 
 	//bi-directional many-to-many association to Specialty
 	@ManyToMany
 	@JoinTable(
-			name="vet_specialties"
-			, joinColumns={
-				@JoinColumn(name="vet_id", nullable=false)
-				}
-			, inverseJoinColumns={
-				@JoinColumn(name="specialty_id", nullable=false)
-				}
+			name="vet_specialties", 
+			joinColumns={ @JoinColumn(name="vet_id", nullable=false) }, 
+			inverseJoinColumns={ @JoinColumn(name="specialty_id", nullable=false) }
 			)
 	private Set<Specialty> specialties;
 
@@ -52,14 +55,11 @@ public class Vet implements Serializable {
 	}
 
 	public Vet(String firstName, String lastName) {
-		this();
-		this.firstName = firstName;
-		this.lastName = lastName;
+		this(0, firstName, lastName);
 	}
 
 	public Vet(int id, String firstName, String lastName) {
-		this();
-		this.id = id;
+		this(id);
 		this.firstName = firstName;
 		this.lastName = lastName;
 	}
@@ -94,6 +94,16 @@ public class Vet implements Serializable {
 
 	public void setSpecialties(Set<Specialty> specialties) {
 		this.specialties = specialties;
+	}
+	
+	public Specialty addSpecialty(Specialty specialty) {
+		specialties.add(specialty);
+		return specialty;
+	}
+	
+	public Specialty removeSpecialty(Specialty specialty) {
+		specialties.remove(specialty);
+		return specialty;
 	}
 
 	@Override
