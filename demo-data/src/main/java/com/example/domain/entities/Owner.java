@@ -45,12 +45,11 @@ public class Owner extends AbstractEntity<Owner> implements Serializable {
 	private Direction direction;
 
 	@Column(length = 20)
-	@NotBlank
 	@Size(max = 20)
 	private String telephone;
 
 	// bi-directional many-to-one association to Pet
-	@OneToMany(mappedBy = "owner")
+	@OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
 	private List<Pet> pets;
 
 	public Owner() {

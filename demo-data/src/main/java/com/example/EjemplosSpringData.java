@@ -4,12 +4,18 @@ import java.time.LocalDate;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.example.contracts.domain.repositories.OwnersRepository;
 import com.example.contracts.domain.repositories.PetsRepository;
 import com.example.contracts.domain.repositories.VetsRepository;
+import com.example.domain.entities.Owner;
 import com.example.domain.entities.Pet;
+import com.example.domain.entities.Specialty;
 import com.example.domain.entities.Type;
+import com.example.domain.entities.Vet;
 import com.example.domain.entities.Visit;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -31,6 +37,9 @@ public class EjemplosSpringData {
 	VetsRepository daoVets;
 	
 	void veterinarios() {
+//		var vet = new Vet("Pepito", "Grillo");
+//		vet.addSpecialty(new Specialty(1));
+//		daoVets.save(vet);
 		daoVets.findAll().forEach(System.out::println);
 	}
 	@Autowired
@@ -51,5 +60,39 @@ public class EjemplosSpringData {
 //		daoPets.deleteById(13);
 //		daoPets.findAll().forEach(System.out::println);
 	
+	}
+	
+	@Autowired
+	OwnersRepository daoOwners;
+	
+	@Transactional
+	public void propietarios() {
+//		System.out.println(">>> findTop3ByFirstNameStartingWithIgnoreCaseOrderByLastNameDesc");
+//		daoOwners.findTop3ByFirstNameStartingWithIgnoreCaseOrderByLastNameDesc("j").forEach(System.out::println);
+//		System.out.println(">>> findTop3ByFirstNameStartingWithIgnoreCase");
+//		daoOwners.findTop3ByFirstNameStartingWithIgnoreCase("j", Sort.by("FirstName")).forEach(System.out::println);
+//		System.out.println(">>> findByIdGreaterThanEqual");
+//		daoOwners.findByIdGreaterThanEqual(10).forEach(System.out::println);
+//		System.out.println(">>> findNuevosConJPQL");
+//		daoOwners.findNuevosConJPQL(10).forEach(System.out::println);
+//		System.out.println(">>> findNuevosConSQL");
+//		daoOwners.findNuevosConSQL(10).forEach(System.out::println);
+//		System.out.println(">>> Specification");
+//		daoOwners.findAll((root, query, builder) -> builder.greaterThanOrEqualTo(root.get("id"), 10)).forEach(System.out::println);
+//		System.out.println(">>> Otra Specification");
+//		daoOwners.findAll((root, query, builder) -> builder.lessThan(root.get("id"), 3)).forEach(System.out::println);
+		daoOwners.findAll((root, query, builder) -> builder.lessThan(root.get("id"), 3)).forEach(item -> {
+			System.out.println(item);
+			item.getPets().forEach(m -> System.out.println("\t" + m));
+		});
+	}
+	
+	@Transactional
+	void transaccion( ) {
+		var vet = new Vet("Pepito", "Grillo");
+//		vet.addSpecialty(new Specialty(1));
+		daoVets.save(vet);
+		daoOwners.save(new Owner(0, "Pepe", "Illo"));
+//		daoOwners.save(new Owner(0));
 	}
 }
