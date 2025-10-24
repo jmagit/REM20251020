@@ -1,19 +1,21 @@
-package com.example.springioclab.model;
+package com.example.model;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 
-@Component("prototypeBean")
+@Component
 @Scope("prototype")
 public class PrototypeBean {
 
-    private static int counter = 0;
+    private static int instances = 0;
     private final int id;
+    private int counter = 0;
 
     public PrototypeBean() {
-        id = ++counter;
+        id = ++instances;
     }
 
     @PostConstruct
@@ -21,8 +23,12 @@ public class PrototypeBean {
         System.out.println("PrototypeBean init, id=" + id);
     }
 
+    public int getNext() { 
+    	return ++counter; 
+    }
+    
     @Override
     public String toString() {
-        return "PrototypeBean#" + id;
+        return "PrototypeBean#" + id + " counter: " + counter;
     }
 }

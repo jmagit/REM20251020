@@ -1,3 +1,5 @@
 spring:
+  application:
+    name: spring-ioc-lab
   profiles:
-    active: dev
+    active: prod

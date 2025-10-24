@@ -1,6 +1,6 @@
-package com.example.springioclab.service;
+package com.example.service;
 
-import com.example.springioclab.model.Saludo;
+import com.example.model.Saludo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

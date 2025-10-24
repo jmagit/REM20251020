@@ -345,11 +345,11 @@ public class StrictNullChecksAspect {
     spring-ioc-lab/
     ├─ src/main/java/com/example/
     │   ├─ SpringAopLabApplication.java
-    │   ├─ aop/StrictNullChecksAspect.java
-    │   └─ service/SampleService/
+    │   └─ aop/StrictNullChecksAspect.java
     ├─ src/main/resources/
     │   └─ application.properties
     └─ src/test/java/com/example/
+    │   ├─ aop/DummyService.java
         └─ aop/StrictNullChecksAspectTest.java
 
 ## Buenas Prácticas y Extensiones
@@ -365,4 +365,4 @@ public class StrictNullChecksAspect {
 - [Spring Boot Testing](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.testing)
 
 ---
-©️JMA 2024
+© JMA 2024

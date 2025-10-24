@@ -3,6 +3,7 @@
 ## Objetivo del laboratorio
 
 Aprender cómo funciona Spring IoC y sus principales características dentro de un proyecto Spring Boot:
+
 - Inyección de dependencias (DI)
 - Tipos de inyección: por constructor, setter y campo
 - Alcances de beans (Scopes)
@@ -29,6 +30,7 @@ Aprender cómo funciona Spring IoC y sus principales características dentro de 
     - Group: `com.example`
     - Artifact: `spring-ioc-lab`
     - Name: `spring-ioc-lab`
+    - Description: `Laboratorio Spring IoC: Inversión de Control`
     - Package name: `com.example`
 3. Añade las dependencias:
     - Spring Boot DevTools (spring-boot-devtools)
@@ -36,9 +38,9 @@ Aprender cómo funciona Spring IoC y sus principales características dentro de 
 
 ### Crear paquetes
 
-- com.example.springioclab.config
-- com.example.springioclab.model
-- com.example.springioclab.service
+- com.example.config
+- com.example.model
+- com.example.service
 
 ### Usar YAML en las propiedades
 
@@ -48,7 +50,7 @@ Aprender cómo funciona Spring IoC y sus principales características dentro de 
 ### Estructura base
 
     spring-ioc-lab/
-    ├─ src/main/java/com/example/springioclab/
+    ├─ src/main/java/com/example/
     │   ├─ SpringIocLabApplication.java
     │   ├─ config/
     │   ├─ model/
@@ -61,7 +63,7 @@ Aprender cómo funciona Spring IoC y sus principales características dentro de 
 `SpringIocLabApplication.java`
 
 ```java
-package com.example.springioclab;
+package com.example;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -86,7 +88,7 @@ public class SpringIocLabApplication implements CommandLineRunner {
 `model/Saludo.java`
 
 ```java
-package com.example.springioclab.model;
+package com.example.model;
 
 import org.springframework.stereotype.Component;
 
@@ -105,9 +107,9 @@ public class Saludo {
 `service/PersonaService.java`
 
 ```java
-package com.example.springioclab.service;
+package com.example.service;
 
-import com.example.springioclab.model.Saludo;
+import com.example.model.Saludo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -133,9 +135,9 @@ public class PersonaService {
 `service/SetterService.java`
 
 ```java
-package com.example.springioclab.service;
+package com.example.service;
 
-import com.example.springioclab.model.Saludo;
+import com.example.model.Saludo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -160,9 +162,9 @@ public class SetterService {
 `service/FieldInjectionService.java`
 
 ```java
-package com.example.springioclab.service;
+package com.example.service;
 
-import com.example.springioclab.model.Saludo;
+import com.example.model.Saludo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -185,15 +187,15 @@ En la clase principal:
 `SpringIocLabApplication.java`
 
 ```java
-package com.example.springioclab;
+package com.example;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.example.springioclab.service.FieldInjectionService;
-import com.example.springioclab.service.PersonaService;
-import com.example.springioclab.service.SetterService;
+import com.example.service.FieldInjectionService;
+import com.example.service.PersonaService;
+import com.example.service.SetterService;
 
 @SpringBootApplication
 public class SpringIocLabApplication implements CommandLineRunner {
@@ -249,9 +251,9 @@ El resultado al ejecutar es:
 `config/AppConfig.java`
 
 ```java
-package com.example.springioclab.config;
+package com.example.config;
 
-import com.example.springioclab.model.Saludo;
+import com.example.model.Saludo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -275,9 +277,9 @@ Para usar este Bean, se puede inyectar por nombre:
 `service/PersonaService.java`
 
 ```java
-package com.example.springioclab.service;
+package com.example.service;
 
-import com.example.springioclab.model.Saludo;
+import com.example.model.Saludo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -316,7 +318,7 @@ El resultado al ejecutar es:
 `model/Saludo.java`
 
 ```java
-package com.example.springioclab.model;
+package com.example.model;
 
 import org.springframework.stereotype.Component;
 
@@ -372,9 +374,9 @@ El resultado al ejecutar es:
 
     :
     Inicializando Saludo...
-    Nuevo bean Saludo creado, soy com.example.springioclab.model.Saludo@2fefeed3
+    Nuevo bean Saludo creado, soy com.example.model.Saludo@2fefeed3
     Inicializando Saludo...
-    Nuevo bean Saludo creado, soy com.example.springioclab.model.Saludo@5ad91fce
+    Nuevo bean Saludo creado, soy com.example.model.Saludo@5ad91fce
     :
 
 El valor que muestra después de la @ representa a la referencia, su valor concreto no es lo importante (lo puede cambiar el Garbage Collector), que coincidan o no si es relevante, dado que valores distintos representan instancias distintas. Cada vez que lo inyectes, Spring creará una nueva instancia.
@@ -385,7 +387,7 @@ Los beans *singleton* comparten su estado mientras que los *prototype* no.
 
 `model/PrototypeBean.java`
 ```java
-package com.example.springioclab.model;
+package com.example.model;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -426,17 +428,17 @@ En la clase principal:
 `SpringIocLabApplication.java`
 
 ```java
-package com.example.springioclab;
+package com.example;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
-import com.example.springioclab.model.PrototypeBean;
-import com.example.springioclab.service.FieldInjectionService;
-import com.example.springioclab.service.PersonaService;
-import com.example.springioclab.service.SetterService;
+import com.example.model.PrototypeBean;
+import com.example.service.FieldInjectionService;
+import com.example.service.PersonaService;
+import com.example.service.SetterService;
 
 @SpringBootApplication
 public class SpringIocLabApplication implements CommandLineRunner {
@@ -517,12 +519,11 @@ El resultado al ejecutar es:
 
 ### @Lazy
 
-
 Con @Lazy, el bean *singleton* se crea solo cuando se inyecta la primera vez:
 
 `model/SaludoLento.java`
 ```java
-package com.example.springioclab.model;
+package com.example.model;
 
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -588,7 +589,7 @@ Varias implementaciones del mismo tipo:
 
 `model/Saludar.java`
 ```java
-package com.example.springioclab.model;
+package com.example.model;
 
 public interface Saludar {
     String obtenerMensaje();
@@ -597,7 +598,7 @@ public interface Saludar {
 
 `model/SaludoFormal.java`
 ```java
-package com.example.springioclab.model;
+package com.example.model;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
@@ -611,7 +612,7 @@ class SaludoFormal implements Saludar {
 
 `model/SaludoFormal.java`
 ```java
-package com.example.springioclab.model;
+package com.example.model;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
@@ -628,11 +629,11 @@ En el servicio:
 `service/PersonaService.java`
 
 ```java
-package com.example.springioclab.service;
+package com.example.service;
 
 import org.springframework.stereotype.Service;
 
-import com.example.springioclab.model.Saludar;
+import com.example.model.Saludar;
 
 @Service
 public class PersonaService {
@@ -701,10 +702,10 @@ Para usar el Bean cualificado:
 `config/AppConfig.java`
 
 ```java
-package com.example.springioclab.config;
+package com.example.config;
 
-import com.example.springioclab.model.Saludar;
-import com.example.springioclab.model.Saludo;
+import com.example.model.Saludar;
+import com.example.model.Saludo;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -739,12 +740,12 @@ public class AppConfig {
 `service/PersonaService.java`
 
 ```java
-package com.example.springioclab.service;
+package com.example.service;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import com.example.springioclab.model.Saludar;
+import com.example.model.Saludar;
 
 @Service
 public class PersonaService {
@@ -754,7 +755,7 @@ public class PersonaService {
 
     public PersonaService(Saludar saludoDefault,  @Qualifier("saludoGenerico") Saludar otroSaludo) {
         this.saludoDefault = saludoDefault;
-		this.saludoGenerico = otroSaludo;
+        this.saludoGenerico = otroSaludo;
     }
 
     public void decirHola() {
@@ -889,7 +890,7 @@ El resultado al ejecutar es:
 
     spring-ioc-lab/
     ├─ pom.xml
-    ├─ src/main/java/com/example/springioclab/
+    ├─ src/main/java/com/example/
     │   ├─ SpringIocLabApplication.java        ← Clase principal
     │   ├─ config/AppConfig.java               ← Beans configurados manualmente
     │   ├─ model/
@@ -916,4 +917,4 @@ El resultado al ejecutar es:
 | Perfiles | @Profile("dev") | SaludoDev, SaludoProd |
 
 ---
-©️JMA 2024
+© JMA 2024
