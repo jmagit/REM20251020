@@ -43,8 +43,8 @@ Agregar la dependencia:
 
 ### Crear paquetes
 
-- com.example.aop
-- com.example.service
+- com.example.aop (main)
+- com.example.aop (test)
 
 ## Paso 2: Clase principal
 
@@ -68,21 +68,39 @@ public class SpringAopLabApplication {
 
 ## Paso 3. Crear una clase de servicio para probar el aspecto
 
-Crea una clase ejemplo en `src/main/java/com/example/service/SampleService.java`:
+`src/test/java/com/example/aop/DummyService.java`
 
 ```java
-package com.example.service;
+package com.example.aop;
 
-import org.springframework.stereotype.Service;
+import java.util.Optional;
 
-@Service
-public class SampleService {
+public class DummyService {
+    private String value = null;
+
+    public Optional<String> getValue() {
+        return Optional.ofNullable(value);
+    }
+
+    public void setValue(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalArgumentException("No acepto argumentos nulos");
+        }
+        this.value = value;
+    }
+    
+    public void clearValue() {
+        value = null;
+    }
+
     public String echo(String input) {
         return input;
     }
+    
     public String alwaysNull() {
         return null;
     }
+
 }
 ```
 
@@ -93,52 +111,108 @@ Crea un test de integración en `src/test/java/com/example/aop/StrictNullChecksA
 ```java
 package com.example.aop;
 
-import com.example.service.SampleService;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.springframework.context.annotation.Import;
 
 @SpringBootTest
+@Import(DummyService.class)
 class StrictNullChecksAspectTest {
     @Autowired
-    SampleService service;
+    DummyService service;
+ 
+    @Test
+    @DisplayName("Valores validos para la propiedad Value")
+    void testValueOK() {
+        assertDoesNotThrow(() -> service.setValue("valor"));
+        assertTrue(service.getValue().isPresent());
+        assertEquals("valor", service.getValue().get());
+    }
+   
+    @ParameterizedTest
+    @NullAndEmptySource
+    @DisplayName("Valores invalidos para la propiedad Value")
+    void testValueKO(String caso) {
+        var ex = assertThrows(IllegalArgumentException.class, () -> service.setValue(caso));
+        assertTrue(service.getValue().isEmpty());
+    }
 
     @Test
+    @DisplayName("Borrar (poner a null) la propiedad Value")
+    void testClearValue() {
+        assertDoesNotThrow(() -> service.setValue("not null"));
+        assertTrue(service.getValue().isPresent());
+        assertDoesNotThrow(() -> service.clearValue());
+        assertNotNull(service.getValue());
+        assertTrue(service.getValue().isEmpty());
+    }
+
+
+    @ParameterizedTest
+    @ValueSource(strings = {"not null"})
+    @EmptySource
+    @DisplayName("Valores validos para los argumentos de los métodos")
+    void testValidArgumentAndReturn(String caso) {
+        assertEquals("not null", service.echo("not null"));
+    }
+
+    @Test
+    @DisplayName("El aspecto lanza IllegalArgumentException con argumentos nulos")
     void testNullArgumentThrows() {
         Exception ex = assertThrows(IllegalArgumentException.class, () -> service.echo(null));
         assertTrue(ex.getMessage().contains("Illegal argument"));
     }
 
     @Test
+    @DisplayName("El aspecto lanza NoSuchElementException con retornos nulos")
     void testNullReturnThrows() {
         Exception ex = assertThrows(java.util.NoSuchElementException.class, () -> service.alwaysNull());
         assertTrue(ex.getMessage().contains("Returns null"));
     }
 
-    @Test
-    void testValidArgumentAndReturn() {
-        assertEquals("hello", service.echo("hello"));
-    }
 }
 ```
 
-Observaciones:
+> [!NOTE]
+> Son pruebas de integración con @SpringBootTest para que SampleService sea inyectado y se verifique que se lanzan las excepciones esperadas.
 
-- Son Test de integración con @SpringBootTest para SampleService sea inyectado y se verifique que se lanzan las excepciones esperadas.
-- Importante: las pruebas llaman al bean inyectado (pasa por el proxy y activa el aspecto).
-- Los test se pueden ejecutar con `mvn test`o con el propio IDE.
+> [!IMPORTANT]
+> Las pruebas llaman al bean inyectado (pasa por el proxy AOP y activa el aspecto).
+
+> [!TIP]
+> Las pruebas se pueden ejecutar con `mvn test` o con el propio IDE.
 
 ## Paso 5. Ejecuta las pruebas
 
-- testNullArgumentThrows: `falla`
-- testNullReturnThrows: `falla`
-- testValidArgumentAndReturn: `pasa`
+| Resultados (6/8)|
+| --- |
+| *Valores validos para los argumentos de los métodos* |
+|   ✅ [1] caso='not null' |
+|   ✅ [2] caso=''  |
+| ❌ El aspecto lanza IllegalArgumentException con argumentos nulos |
+| ❌ El aspecto lanza NoSuchElementException con retornos nulos |
+| ✅ Valores validos para la propiedad Value |
+| ✅ Borrar (poner a null) la propiedad Value |
+| *Valores invalidos para la propiedad Value* |
+|   ✅ [1] caso=null |
+|   ✅ [2] caso='' |
+
+> [!NOTE]
+> El orden puede cambiar pseudo aleatoriamente.
 
 ## Paso 6. Crear el aspecto StrictNullChecks
-
-Agrega la clase `StrictNullChecksAspect` con el siguiente código:
 
 `src/main/java/com/example/aop/StrictNullChecksAspect.java` 
 
@@ -192,15 +266,27 @@ public class StrictNullChecksAspect {
 
 ## Paso 8. Ejecuta las pruebas
 
-- testNullArgumentThrows: `pasa`
-- testNullReturnThrows: `falla`
-- testValidArgumentAndReturn: `pasa`
+| Resultados (7/8)|
+| --- |
+| *Valores validos para los argumentos de los métodos* |
+|   ✅ [1] caso='not null' |
+|   ✅ [2] caso=''  |
+| ✅ El aspecto lanza IllegalArgumentException con argumentos nulos |
+| ❌ El aspecto lanza NoSuchElementException con retornos nulos |
+| ✅ Valores validos para la propiedad Value |
+| ✅ Borrar (poner a null) la propiedad Value |
+| *Valores invalidos para la propiedad Value* |
+|   ✅ [1] caso=null |
+|   ✅ [2] caso='' |
+
+> [!NOTE]
+> El orden puede cambiar pseudo aleatoriamente.
 
 ## Paso 9. Añadir el consejo (advice) que compruebe valores nulos de retorno
 
 `src/main/java/com/example/aop/StrictNullChecksAspect.java` 
 
-```java
+```java title="app.js"
 package com.example.aop;
 
 import java.util.NoSuchElementException;
@@ -232,15 +318,27 @@ public class StrictNullChecksAspect {
 
 ## Paso 10. Ejecuta las pruebas
 
-- testNullArgumentThrows: `pasa`
-- testNullReturnThrows: `pasa`
-- testValidArgumentAndReturn: `pasa`
+| Resultados (8/8)|
+| --- |
+| *Valores validos para los argumentos de los métodos* |
+|   ✅ [1] caso='not null' |
+|   ✅ [2] caso=''  |
+| ✅ El aspecto lanza IllegalArgumentException con argumentos nulos |
+| ✅ El aspecto lanza NoSuchElementException con retornos nulos |
+| ✅ Valores validos para la propiedad Value |
+| ✅ Borrar (poner a null) la propiedad Value |
+| *Valores invalidos para la propiedad Value* |
+|   ✅ [1] caso=null |
+|   ✅ [2] caso='' |
+
+> [!NOTE]
+> El orden puede cambiar pseudo aleatoriamente.
 
 ## Explicación de Funcionamiento
 
 - **@Aspect:** Marca la clase como aspecto de AOP.
-- **@Before:** Intercepta antes de ejecutar métodos públicos en `com.example..*` con al menos un parámetro y lanza excepción si algún argumento es nulo.
-- **@AfterReturning:** Intercepta después de métodos con retorno (no `void`) y lanza excepción si el retorno es nulo.
+- **@Before:** Intercepta antes de ejecutar métodos públicos en `com.example..*` con al menos un parámetro y lanza una `IllegalArgumentException` si algún argumento es nulo.
+- **@AfterReturning:** Intercepta después de métodos con retorno (no `void`) y lanza una `NoSuchElementException` si el retorno es nulo.
 
 ## Estructura base
 
