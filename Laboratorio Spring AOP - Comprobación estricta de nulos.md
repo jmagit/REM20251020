@@ -51,7 +51,7 @@ Agregar la dependencia:
 `src/main/java/com/example/SpringIocLabApplication.java`
 
 ```java
-package com.example.springaoplab;
+package com.example;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -75,6 +75,8 @@ package com.example.aop;
 
 import java.util.Optional;
 
+import org.springframework.lang.NonNull;
+
 public class DummyService {
     private String value = null;
 
@@ -82,7 +84,7 @@ public class DummyService {
         return Optional.ofNullable(value);
     }
 
-    public void setValue(String value) {
+    public void setValue(@NonNull String value) {
         if (value == null || value.trim().isEmpty()) {
             throw new IllegalArgumentException("No acepto argumentos nulos");
         }
@@ -93,7 +95,8 @@ public class DummyService {
         value = null;
     }
 
-    public String echo(String input) {
+    @NonNull 
+    public String echo(@NonNull String input) {
         return input;
     }
     
